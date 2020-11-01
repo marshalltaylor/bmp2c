@@ -20,24 +20,27 @@ class BmpFile:
     header_size = header_array[1]
     header_offset = header_array[4]
 
-    #print(header_field)
-    #print(header_size)
-    #print(header_offset)
+    print('Main Header Data')
+    print(' field: ' + str(header_field))
+    print(' size: ' + str(header_size))
+    print(' offset: ' + str(header_offset))
     
     if(header_field != b'BM'):
         print('ERROR: Not a windows bitmap. Try mspaint')
     
     header_data = image_file.read(24)
-    #print(header_data)
-    dib_array = unpack('=LLL8xL', header_data)
+    #print('Sub Header Data')
+    print('DATA: ' + str(header_data))
+    dib_array = unpack('=LLLHHxxxxL', header_data)
     #print(dib_array)
     dib_size = dib_array[0]
     self.width = dib_array[1]
     self.height = dib_array[2]
-    self.data_length = dib_array[3]
+    self.bytesPerPixel = int(dib_array[4] / 8)
+    self.data_length = dib_array[5]
     #print(dib_size)
     
-    image_file.read(16)
+    image_file.seek(header_offset)
     
     self.data = image_file.read(self.data_length)
 
@@ -46,15 +49,21 @@ class BmpFile:
     
   def getPixel(self, x, y):
     bmp_y = self.height - y - 1
-    r = self.data[(bmp_y * self.width * 3) + (x * 3)]
-    g = self.data[(bmp_y * self.width * 3) + (x * 3) + 1]
-    b = self.data[(bmp_y * self.width * 3) + (x * 3) + 2]
+    if self.bytesPerPixel == 1:
+      r = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel)]
+      g = r
+      b = r
+    if self.bytesPerPixel == 3:
+      r = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel)]
+      g = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel) + 1]
+      b = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel) + 2]
     return (r, g, b)
 
   def printDebug(self):
     print('BmpFile Params')
     print(' width: ' + str(self.width))
     print(' height: ' + str(self.height))
+    print(' bytes per pixel: ' + str(self.bytesPerPixel))
     print(' data length: ' + str(self.data_length))
 
 	#For debugging exact data:
