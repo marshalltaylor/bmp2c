@@ -20,22 +20,22 @@ class BmpFile:
     header_size = header_array[1]
     header_offset = header_array[4]
 
-    print(header_field)
-    print(header_size)
-    print(header_offset)
+    #print(header_field)
+    #print(header_size)
+    #print(header_offset)
     
     if(header_field != b'BM'):
         print('ERROR: Not a windows bitmap. Try mspaint')
     
     header_data = image_file.read(24)
-    print(header_data)
+    #print(header_data)
     dib_array = unpack('=LLL8xL', header_data)
-    print(dib_array)
+    #print(dib_array)
     dib_size = dib_array[0]
     self.width = dib_array[1]
     self.height = dib_array[2]
     self.data_length = dib_array[3]
-    print(dib_size)
+    #print(dib_size)
     
     image_file.read(16)
     
@@ -56,8 +56,13 @@ class BmpFile:
     print(' width: ' + str(self.width))
     print(' height: ' + str(self.height))
     print(' data length: ' + str(self.data_length))
-    print(' data: ' + str(self.data[1000:1200]))
+
+	#For debugging exact data:
+    #print(' data: ' + str(self.data[1000:1200]))
     
+    print()
+    print(' Ascii thumb:')
+    print()
     for y in range(0, self.height, 3):
       line = ''
       for x in range(0, self.width, 3):

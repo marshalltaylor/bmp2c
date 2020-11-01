@@ -10,12 +10,15 @@ def main(argv):
    except getopt.GetoptError:
       print('test.py -i <inputfile>')
       sys.exit(2)
+   listHelpAndExit = True
    for opt, arg in opts:
-      if opt == '-h':
-         print('test.py -i <inputfile>')
-         sys.exit()
-      elif opt in ("-i", "--ifile"):
+      if opt in ("-i", "--ifile"):
          inputfile = arg
+         listHelpAndExit = False
+   if listHelpAndExit == True:
+         print('test.py -i <inputfile>')
+         print('  ex: `python bmp2c.py -i data\\test_image_mono.bmp`')
+         sys.exit()
    print('Input file is "', inputfile)
    
    obj = BmpFile()
