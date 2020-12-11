@@ -34,6 +34,7 @@ def main(argv):
        for x in range(0, obj.width):
          px = obj.getPixel(x, y)
          value = px[0]
+         print(hex(value))
          #line = line + str(int(value)) + ', '
          line = line + "0x%02X" % value + ', '
        line = line + '\n'

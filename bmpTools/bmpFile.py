@@ -41,8 +41,12 @@ class BmpFile:
     #print(dib_size)
     
     image_file.seek(header_offset)
-    
-    self.data = image_file.read(self.data_length)
+    bytesPerRow = self.width * self.bytesPerPixel
+    bytePaddingRequired = 4 - (bytesPerRow % 4)
+    self.data = b""
+    for y in range(0, self.height):
+      self.data = self.data + image_file.read(bytesPerRow)
+      image_file.read(bytePaddingRequired)
 
     self.printDebug()
     image_file.close()
@@ -57,6 +61,7 @@ class BmpFile:
       r = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel)]
       g = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel) + 1]
       b = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel) + 2]
+    print(str(int(x)) + ", " + str(int(y)) + ", " + hex(r))
     return (r, g, b)
 
   def printDebug(self):
