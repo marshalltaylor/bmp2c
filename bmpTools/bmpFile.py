@@ -39,10 +39,13 @@ class BmpFile:
     self.bytesPerPixel = int(dib_array[4] / 8)
     self.data_length = dib_array[5]
     #print(dib_size)
-    
     image_file.seek(header_offset)
     bytesPerRow = self.width * self.bytesPerPixel
-    bytePaddingRequired = 4 - (bytesPerRow % 4)
+    print(" per row", bytesPerRow)
+    bytePaddingRequired = 0
+    if((bytesPerRow % 4) != 0):
+      bytePaddingRequired = 4 - (bytesPerRow % 4)
+    print(" pad per row", bytePaddingRequired)
     self.data = b""
     for y in range(0, self.height):
       self.data = self.data + image_file.read(bytesPerRow)
@@ -53,6 +56,8 @@ class BmpFile:
     
   def getPixel(self, x, y):
     bmp_y = self.height - y - 1
+    #print('get ', x, y)
+    #print('get ', (bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel))
     if self.bytesPerPixel == 1:
       r = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel)]
       g = r
@@ -61,7 +66,7 @@ class BmpFile:
       r = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel)]
       g = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel) + 1]
       b = self.data[(bmp_y * self.width * self.bytesPerPixel) + (x * self.bytesPerPixel) + 2]
-    print(str(int(x)) + ", " + str(int(y)) + ", " + hex(r))
+    #print(str(int(x)) + ", " + str(int(y)) + ", " + hex(r))
     return (r, g, b)
 
   def printDebug(self):
@@ -70,9 +75,9 @@ class BmpFile:
     print(' height: ' + str(self.height))
     print(' bytes per pixel: ' + str(self.bytesPerPixel))
     print(' data length: ' + str(self.data_length))
-
-	#For debugging exact data:
-    #print(' data: ' + str(self.data[1000:1200]))
+    print(' measured length: ' + str(len(self.data)))
+    #For debugging exact data:
+    #print(' data: ' + str(self.data[0:1000]))
     
     print()
     print(' Ascii thumb:')
